@@ -3,6 +3,7 @@ from twisted.web.server import Site
 from twisted.web.resource import Resource
 from twisted.internet import reactor
 import time
+import os
 
 import cgi
 
@@ -25,5 +26,6 @@ class FormPage(Resource):
 root = Resource()
 root.putChild("apis", FormPage())
 factory = Site(root)
-reactor.listenTCP(8880, factory)
+port = os.environ.get("PORT", "8880")
+reactor.listenTCP(int(port), factory)
 reactor.run()

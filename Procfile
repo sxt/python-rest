@@ -1,1 +1,1 @@
-web: python simplerest.py
+web: gunicorn simplerest:app

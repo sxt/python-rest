@@ -1,4 +1,1 @@
 Twisted==13.1.0
-Twisted-Core==13.1.0
-Twisted-Runner==13.1.0
-Twisted-Web==13.1.0

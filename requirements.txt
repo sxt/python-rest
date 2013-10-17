@@ -1,10 +1,4 @@
 Twisted==13.1.0
-Twisted-Conch==13.1.0
 Twisted-Core==13.1.0
-Twisted-Lore==13.1.0
-Twisted-Mail==13.1.0
-Twisted-Names==13.1.0
-Twisted-News==13.1.0
 Twisted-Runner==13.1.0
 Twisted-Web==13.1.0
-Twisted-Words==13.1.0

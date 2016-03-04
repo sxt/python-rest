@@ -7,6 +7,8 @@ import os
 import json
 import cgi
 
+
+
 class FormPage(Resource):
     isLeaf = False
 
@@ -18,6 +20,10 @@ class FormPage(Resource):
             return self
         return Resource.getChild(self, name, request)
 
+    def render_POST(self, request):
+        request.responseHeaders.addRawHeader(b"content-type", b"text/plain")
+        return "You posted data:\n%s" % (cgi.escape(request.content.read()),)
+    
     def render_GET(self, request):
         request.setHeader("Content-Type", "application/json")
         emp=request.args['emp'][0]

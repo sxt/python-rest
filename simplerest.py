@@ -28,7 +28,7 @@ class FormPage(Resource):
         request.setHeader("Content-Type", "application/json")
         emp=request.args['emp'][0]
 
-        print request.path
+        print (request.path)
 
         resString = ""
         #if request.path == "/apis/redir":
@@ -48,7 +48,7 @@ class RedirectPoint(Resource):
     def render_GET(self, request):
         request.setHeader("Content-Type", "application/json")
 
-        print request.path
+        print (request.path)
 
         resString = ""
         resString = "{ \"args\":" + json.dumps(str(request.args)) + "}"

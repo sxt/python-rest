@@ -28,6 +28,8 @@ class FormPage(Resource):
 
     def render_POST(self, request):
         request.responseHeaders.addRawHeader(b"content-type", b"text/plain")
+        print ("POST request received. Request body:")
+        print (str(request.content.read()))
         return ("You posted data:\n%s" % (str(request.content.read()),)).encode('utf-8')
    
     def render_GET(self, request):

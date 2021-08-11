@@ -22,11 +22,11 @@ class FormPage(Resource):
 
     def render_POST(self, request):
         request.responseHeaders.addRawHeader(b"content-type", b"text/plain")
-        return "You posted data:\n%s" % (cgi.escape(request.content.read()),)
+        return b"You posted data:\n%s" % (cgi.escape(request.content.read()),)
     
     def render_GET(self, request):
         request.setHeader("Content-Type", "application/json")
-        emp=request.args['emp'][0]
+        emp=request.args[b'emp'][0]
 
         print (request.path)
 
@@ -39,7 +39,7 @@ class FormPage(Resource):
         else :
             resString = "{ \"employees\": [ { \"firstName\":\"Anna\" , \"lastName\":\"Smith\" } ] }"
         
-        return resString
+        return resString.encode()
 
 class RedirectPoint(Resource):
     def __init__(self):
@@ -58,9 +58,9 @@ class RedirectPoint(Resource):
 root = Resource()
 context = Resource()
 formPage = FormPage()
-root.putChild("apis", context)
-context.putChild("redir", RedirectPoint())
-context.putChild("emps", formPage)
+root.putChild(b"apis", context)
+context.putChild(b"redir", RedirectPoint())
+context.putChild(b"emps", formPage)
 factory = Site(root)
 port = os.environ.get("PORT", "8880")
 reactor.listenTCP(int(port), factory)

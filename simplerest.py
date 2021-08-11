@@ -22,7 +22,7 @@ class FormPage(Resource):
 
     def render_POST(self, request):
         request.responseHeaders.addRawHeader(b"content-type", b"text/plain")
-        return ("You posted data:\n%s" % (html.escape(str(request.content.read())),)).encode()
+        return ("You posted data:\n%s" % (str(request.content.read()),)).encode('utf-8')
     
     def render_GET(self, request):
         request.setHeader("Content-Type", "application/json")

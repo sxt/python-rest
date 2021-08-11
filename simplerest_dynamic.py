@@ -53,14 +53,20 @@ class RedirectPoint(Resource):
         resString = ""
         resString = "{ \"args\":" + json.dumps(str(request.args)) + "}"
         
-        return resString
+        return resString.encode()
 
-root = Resource()
-context = Resource()
-formPage = FormPage()
-root.putChild(b"apis", context)
-context.putChild(b"redir", RedirectPoint())
-context.putChild(b"emps", formPage)
+class RootResource(Resource):
+  def __init__(self):
+        Resource.__init__(self)
+        self.putChild(b"apis", ContextResource())
+    
+class ContextResource(Resource):
+  def __init__(self):
+        Resource.__init__(self)
+        self.putChild(b"emps", FormPage())
+        self.putChild(b"redir", RedirectPoint())
+
+root = RootResource()
 factory = Site(root)
 port = os.environ.get("PORT", "8880")
 reactor.listenTCP(int(port), factory)

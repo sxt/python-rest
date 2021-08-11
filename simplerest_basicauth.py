@@ -11,7 +11,7 @@ from twisted.cred.checkers import InMemoryUsernamePasswordDatabaseDontUse
 import time
 import os
 import json
-import cgi
+import html
 import sys
 
 
@@ -28,8 +28,8 @@ class FormPage(Resource):
 
     def render_POST(self, request):
         request.responseHeaders.addRawHeader(b"content-type", b"text/plain")
-        return "You posted data:\n%s" % (cgi.escape(request.content.read()),)
-    
+        return ("You posted data:\n%s" % (html.escape(str(request.content.read())),)).encode()
+   
     def render_GET(self, request):
         request.setHeader("Content-Type", "application/json")
         emp=request.args[b'emp'][0]
@@ -59,19 +59,18 @@ class RedirectPoint(Resource):
         resString = ""
         resString = "{ \"args\":" + json.dumps(str(request.args)) + "}"
         
-        return resString
+        return resString.encode()
 
-class GuardedResource(Resource):
-    """
-    A resource which is protected by guard and requires authentication in order
-    to access.
-    """
-
-    def getChild(self, path, request):
-        return self
-
-    def render(self, request):
-        return b"Authorized!"
+class RootResource(Resource):
+  def __init__(self):
+        Resource.__init__(self)
+        self.putChild(b"apis", ContextResource())
+    
+class ContextResource(Resource):
+  def __init__(self):
+        Resource.__init__(self)
+        self.putChild(b"emps", FormPage())
+        self.putChild(b"redir", RedirectPoint())
 
 @implementer(IRealm)
 class SimpleRealm():
@@ -82,22 +81,22 @@ class SimpleRealm():
 
     def requestAvatar(self, avatarId, mind, *interfaces):
         if resource.IResource in interfaces:
-            return resource.IResource, GuardedResource(), lambda: None
+            return resource.IResource, RootResource(), lambda: None
         raise NotImplementedError()
 
     
 checkers = [InMemoryUsernamePasswordDatabaseDontUse(joe=b'blow')]
-root = Resource()
+#root = Resource()
 wrapped_resource = guard.HTTPAuthSessionWrapper(
     Portal(SimpleRealm(), checkers),
     [guard.BasicCredentialFactory(b"example.com")],
 )
 
-context = Resource()
-formPage = FormPage()
-root.putChild(b"apis", context)
-context.putChild(b"redir", RedirectPoint())
-context.putChild(b"emps", formPage)
+#context = Resource()
+#formPage = FormPage()
+#root.putChild(b"apis", context)
+#context.putChild(b"redir", RedirectPoint())
+#context.putChild(b"emps", formPage)
 factory = Site(wrapped_resource)
 port = os.environ.get("PORT", "8880")
 reactor.listenTCP(int(port), factory)

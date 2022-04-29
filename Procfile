@@ -1,1 +1,1 @@
-web: python simplerest_basicauth.py
+web: python simplerest.py
